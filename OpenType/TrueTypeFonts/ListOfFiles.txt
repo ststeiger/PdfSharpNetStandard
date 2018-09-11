@@ -1,0 +1,31 @@
+
+
+// https://stackoverflow.com/questions/16769758/get-a-font-filename-based-on-the-font-handle-hfont
+
+registry mapping fontName to FontFile
+
+
+    RegistryKey fontsSubKey = Registry.LocalMachine.OpenSubKey
+
+      (@"Software\Microsoft\Windows NT\CurrentVersion\Fonts");
+    string fontname = "fontDialog.Font.Name";
+    foreach (string valuename in fontsSubKey.GetValueNames())
+    {
+       if (valuename.StartsWith(fontname))
+       {
+          return fontsSubKey.GetValue(valuename).ToString();
+       }
+    }
+ }
+
+return String.Empty;
+
+
+https://stackoverflow.com/questions/16769758/get-a-font-filename-based-on-the-font-handle-hfont
+
+
+Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts
+Software\\Microsoft\\Windows\\CurrentVersion\\Fonts
+
+https://www.codeproject.com/Articles/1235/Finding-a-Font-file-from-a-Font-name
+https://www.codeproject.com/Articles/4190/XFont-Get-font-name-and-file-information

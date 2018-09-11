@@ -88,6 +88,46 @@ namespace PdfSharp.Drawing
         }
         readonly OpenTypeFontface _fontface;
 
+        
+        public XFontSource FontSource
+        {
+            get { return _fontSource; }
+        }
+        readonly XFontSource _fontSource;
+        
+        
+        public XStyleSimulations StyleSimulations
+        {
+            get { return _styleSimulations; }
+        }
+        XStyleSimulations _styleSimulations;
+        
+        
+        internal GdiFont GdiFont
+        {
+            get { return _gdiFont; }
+        }
+
+        private readonly GdiFont _gdiFont;
+        
+        
+        
+        XGlyphTypeface(string key, XFontFamily fontFamily, XFontSource fontSource, XStyleSimulations styleSimulations, GdiFont gdiFont)
+        {
+            _key = key;
+            _fontFamily = fontFamily;
+            _fontSource = fontSource;
+            
+            _fontface = OpenTypeFontface.CetOrCreateFrom(fontSource);
+            // Debug.Assert(ReferenceEquals(_fontSource.Fontface, _fontface));
+            
+            //_gdiFont = gdiFont;
+            _styleSimulations = styleSimulations;
+            //Initialize();
+        }
+        
+        
+        
 
         /*
         // Implementation Notes
