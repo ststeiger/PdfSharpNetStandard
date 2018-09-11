@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>fc7ec0d5-b0bd-465e-988e-bb3cf7f928df</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>PdfSharp_Removed</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Drawing.BarCodes\DataMatrixImage.opensource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Forms\ColorComboBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Forms\PagePreview.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Forms\PagePreviewCanvas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\PagePreview-ag.xaml.cs">
+      <DependentUpon>PagePreview-ag.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\PagePreview-wpf.xaml.cs">
+      <DependentUpon>PagePreview-wpf.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\PagePreviewDesignTimeData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\VisualPresenter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Forms\PagePreview.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Forms\PagePreviewCanvas.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Windows\PagePreview-ag.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Windows\PagePreview-wpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+</Project>
