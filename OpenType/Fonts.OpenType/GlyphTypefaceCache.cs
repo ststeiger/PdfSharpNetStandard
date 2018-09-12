@@ -92,7 +92,7 @@ namespace PdfSharp.Fonts.OpenType
         }
         static volatile GlyphTypefaceCache _singleton;
 
-        /*
+        
         internal static string GetCacheState()
         {
             StringBuilder state = new StringBuilder();
@@ -108,7 +108,7 @@ namespace PdfSharp.Fonts.OpenType
             state.Append("\n");
             return state.ToString();
         }
-        */
+        
 
         /// <summary>
         /// Maps typeface key to glyph typeface.

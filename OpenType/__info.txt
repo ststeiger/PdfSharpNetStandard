@@ -1,0 +1,6 @@
+
+Tthis is a non-functional library. 
+It's purpose is to isolate 
+public OpenTypeFontface CreateFontSubSet(Dictionary<int, object> glyphs, bool cidFont)
+found in 
+OpenType\Fonts.OpenType\OpenTypeFontface.cs

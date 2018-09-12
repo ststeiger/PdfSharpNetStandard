@@ -31,8 +31,11 @@ using System;
 using PdfSharp.Internal;
 using PdfSharp.Pdf;
 
+
 namespace PdfSharp.Fonts
 {
+
+
     /// <summary>
     /// Provides functionality to specify information about the handling of fonts in the current application domain.
     /// </summary>
@@ -44,7 +47,7 @@ namespace PdfSharp.Fonts
         public const string DefaultFontName = "PlatformDefault";
         
         
-        /*
+        
         /// <summary>
         /// Gets or sets the global font resolver for the current application domain.
         /// This static function must be called only once and before any font operation was executed by PDFsharp.
@@ -77,7 +80,7 @@ namespace PdfSharp.Fonts
             }
         }
         static IFontResolver _fontResolver;
-        */
+        
         
         
         /// <summary>
@@ -117,4 +120,6 @@ namespace PdfSharp.Fonts
         static PdfFontEncoding _fontEncoding;
         static bool _fontEncodingInitialized;
     }
+
+
 }
