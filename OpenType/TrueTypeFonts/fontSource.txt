@@ -1,3 +1,4 @@
+
 XGlyphTypeface.cs
 string typefaceKey = ComputeKey(gdiFont);
 FontSource fontSource = XFontSource.GetOrCreateFromGdi(typefaceKey, gdiFont);
@@ -5,87 +6,83 @@ glyphTypeface = new XGlyphTypeface(typefaceKey, fontFamily, fontSource, fontReso
 
 
 
-        internal static XFontSource GetOrCreateFromGdi(string typefaceKey, GdiFont gdiFont)
-        {
-            byte[] bytes = ReadFontBytesFromGdi(gdiFont);
-            XFontSource fontSource = GetOrCreateFrom(typefaceKey, bytes);
-            return fontSource;
-        }
+internal static XFontSource GetOrCreateFromGdi(string typefaceKey, GdiFont gdiFont)
+{
+    byte[] bytes = ReadFontBytesFromGdi(gdiFont);
+    XFontSource fontSource = GetOrCreateFrom(typefaceKey, bytes);
+    return fontSource;
+}
 
 
 
 
+static byte[] ReadFontBytesFromGdi(GdiFont gdiFont)
+{
+    // Weird: LastError is always 123 or 127. Comment out Debug.Assert.
+    int error = Marshal.GetLastWin32Error();
+    // Debug.Assert(error == 0);
+    error = Marshal.GetLastWin32Error();
+    // Debug.Assert(error == 0);
 
-        static byte[] ReadFontBytesFromGdi(GdiFont gdiFont)
-        {
-            // Weird: LastError is always 123 or 127. Comment out Debug.Assert.
-            int error = Marshal.GetLastWin32Error();
-            //Debug.Assert(error == 0);
-            error = Marshal.GetLastWin32Error();
-            //Debug.Assert(error == 0);
-
-            IntPtr hfont = gdiFont.ToHfont();
+    IntPtr hfont = gdiFont.ToHfont();
 #if true
-            IntPtr hdc = NativeMethods.GetDC(IntPtr.Zero);
+    IntPtr hdc = NativeMethods.GetDC(IntPtr.Zero);
 
 
 
-   error = Marshal.GetLastWin32Error();
-            //Debug.Assert(error == 0);
+    error = Marshal.GetLastWin32Error();
+    // Debug.Assert(error == 0);
 
-            IntPtr oldFont = NativeMethods.SelectObject(hdc, hfont);
-            error = Marshal.GetLastWin32Error();
-            //Debug.Assert(error == 0);
+    IntPtr oldFont = NativeMethods.SelectObject(hdc, hfont);
+    error = Marshal.GetLastWin32Error();
+    // Debug.Assert(error == 0);
 
-            // Get size of the font file.
-            bool isTtcf = false;
-            // In Azure I get 0xc0000022
-            int size = NativeMethods.GetFontData(hdc, 0, 0, null, 0);
+    // Get size of the font file.
+    bool isTtcf = false;
+    // In Azure I get 0xc0000022
+    int size = NativeMethods.GetFontData(hdc, 0, 0, null, 0);
 
-            // Check for ntstatus.h: #define STATUS_ACCESS_DENIED             ((NTSTATUS)0xC0000022L)
-            if ((uint)size == 0xc0000022)
-                throw new InvalidOperationException("Microsoft Azure returns STATUS_ACCESS_DENIED ((NTSTATUS)0xC0000022L) from GetFontData. This is a bug in Azure. You must implement a FontResolver to circumvent this issue.");
+    // Check for ntstatus.h: #define STATUS_ACCESS_DENIED             ((NTSTATUS)0xC0000022L)
+    if ((uint)size == 0xc0000022)
+        throw new InvalidOperationException("Microsoft Azure returns STATUS_ACCESS_DENIED ((NTSTATUS)0xC0000022L) from GetFontData. This is a bug in Azure. You must implement a FontResolver to circumvent this issue.");
 
-            if (size == NativeMethods.GDI_ERROR)
-            {
-                // Assume that the font file is a true type collection.
-                size = NativeMethods.GetFontData(hdc, ttcf, 0, null, 0);
-                isTtcf = true;
-            }
-            error = Marshal.GetLastWin32Error();
-            //Debug.Assert(error == 0);
+    if (size == NativeMethods.GDI_ERROR)
+    {
+        // Assume that the font file is a true type collection.
+        size = NativeMethods.GetFontData(hdc, ttcf, 0, null, 0);
+        isTtcf = true;
+    }
+    error = Marshal.GetLastWin32Error();
+    // Debug.Assert(error == 0);
 
-            if (size == 0)
-                throw new InvalidOperationException("Cannot retrieve font data.");
+    if (size == 0)
+        throw new InvalidOperationException("Cannot retrieve font data.");
 
-            byte[] bytes = new byte[size];
-            int effectiveSize = NativeMethods.GetFontData(hdc, isTtcf ? ttcf : 0, 0, bytes, size);
-            Debug.Assert(size == effectiveSize);
-            // Clean up.
-            NativeMethods.SelectObject(hdc, oldFont);
-            NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
+    byte[] bytes = new byte[size];
+    int effectiveSize = NativeMethods.GetFontData(hdc, isTtcf ? ttcf : 0, 0, bytes, size);
+    Debug.Assert(size == effectiveSize);
+    // Clean up.
+    NativeMethods.SelectObject(hdc, oldFont);
+    NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
 
-            return bytes;
-        }
-
-
+    return bytes;
+}
 
 
-        /// <summary>
-        /// Gets an existing font source or creates a new one.
-        /// A new font source is cached in font factory.
-        /// </summary>
-        public static XFontSource GetOrCreateFrom(byte[] bytes)
-        {
-            ulong key = FontHelper.CalcChecksum(bytes);
-            XFontSource fontSource;
-            if (!FontFactory.TryGetFontSourceByKey(key, out fontSource))
-            {
-                fontSource = new XFontSource(bytes, key);
-                // Theoretically the font source could be created by a differend thread in the meantime.
-                fontSource = FontFactory.CacheFontSource(fontSource);
-            }
-            return fontSource;
-        }
-
+/// <summary>
+/// Gets an existing font source or creates a new one.
+/// A new font source is cached in font factory.
+/// </summary>
+public static XFontSource GetOrCreateFrom(byte[] bytes)
+{
+    ulong key = FontHelper.CalcChecksum(bytes);
+    XFontSource fontSource;
+    if (!FontFactory.TryGetFontSourceByKey(key, out fontSource))
+    {
+        fontSource = new XFontSource(bytes, key);
+        // Theoretically the font source could be created by a differend thread in the meantime.
+        fontSource = FontFactory.CacheFontSource(fontSource);
+    }
+    return fontSource;
+}
 
