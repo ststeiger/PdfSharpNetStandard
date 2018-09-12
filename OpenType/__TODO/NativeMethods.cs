@@ -35,25 +35,9 @@ using System.Runtime.InteropServices;
 namespace PdfSharp.Internal
 {
 
-    static class PlatHelper
-    {
-        [DllImport("gdi32.dll", SetLastError = true)]
-        public static extern int GetFontData(
-            IntPtr hdc, // handle to DC
-            uint dwTable, // metric table name
-            uint dwOffset, // offset into table
-            byte[] lpvBuffer, // buffer for returned data
-            int cbData // length of data
-        );
-    }
 
-#if CORE || GDI || WPF
-    /// <summary>
-    /// Required native Win32 calls.
-    /// </summary>
-    static class NativeMethods
+    static class GdiBrainDamage 
     {
-        public const int GDI_ERROR = -1;
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetDC(IntPtr hwnd);
@@ -67,6 +51,75 @@ namespace PdfSharp.Internal
         [DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hgdiobj);
 
+        [DllImport("gdi32.dll", SetLastError = true)]
+        public static extern int GetFontData(
+            IntPtr hdc, // handle to DC
+            uint dwTable, // metric table name
+            uint dwOffset, // offset into table
+            byte[] lpvBuffer, // buffer for returned data
+            int cbData // length of data
+        );
+    } // End Class GdiBrainDamage 
+
+
+
+#if CORE || GDI || WPF
+    /// <summary>
+    /// Required native Win32 calls.
+    /// </summary>
+    static class NativeMethods
+    {
+        public const int GDI_ERROR = -1;
+
+        // TODO: Remove GDI and replace with empty
+        public static bool UseGdi = true;
+
+
+        public static System.IntPtr DefaultIntPtr
+        {
+            get
+            {
+                // return new System.IntPtr(123);
+                return System.IntPtr.Zero; ;
+            }
+        }
+
+
+        public static IntPtr GetDC(IntPtr hwnd)
+        {
+            if(UseGdi)
+                return GdiBrainDamage.GetDC(hwnd);
+
+            return DefaultIntPtr;
+        }
+
+
+        public static IntPtr ReleaseDC(IntPtr hwnd, IntPtr hdc)
+        {
+            if (UseGdi)
+                return GdiBrainDamage.ReleaseDC(hwnd, hdc);
+
+            return DefaultIntPtr;
+        }
+
+
+        public static IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj)
+        {
+            if (UseGdi)
+                return GdiBrainDamage.SelectObject(hdc, hgdiobj);
+
+            return DefaultIntPtr;
+        }
+
+
+        public static bool DeleteObject(IntPtr hgdiobj)
+        {
+            if (UseGdi)
+                return GdiBrainDamage.DeleteObject(hgdiobj);
+
+            return true;
+        }
+
         
         public static int GetFontData(
             IntPtr hdc, // handle to DC
@@ -76,14 +129,16 @@ namespace PdfSharp.Internal
             int cbData // length of data
         )
         {
-            return PlatHelper.GetFontData(hdc, dwTable, dwOffset, lpvBuffer, cbData);
+            if (UseGdi)
+                return GdiBrainDamage.GetFontData(hdc, dwTable, dwOffset, lpvBuffer, cbData);
+
+            // TODO: Use FreeType version of GetFontData 
+            throw new System.NotImplementedException("FreeType version of GetFontData goes here.");
         }
 
 
 
         /*
-        
-
         /// <summary>
         /// Reflected from System.Drawing.SafeNativeMethods+LOGFONT
         /// </summary>
@@ -195,4 +250,6 @@ namespace PdfSharp.Internal
         */
     }
 #endif
+
+
 }

@@ -14,8 +14,6 @@ internal static XFontSource GetOrCreateFromGdi(string typefaceKey, GdiFont gdiFo
 }
 
 
-
-
 static byte[] ReadFontBytesFromGdi(GdiFont gdiFont)
 {
     // Weird: LastError is always 123 or 127. Comment out Debug.Assert.
@@ -85,4 +83,3 @@ public static XFontSource GetOrCreateFrom(byte[] bytes)
     }
     return fontSource;
 }
-

@@ -22,4 +22,8 @@
     <Folder Include="Internal\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="_fontSource.txt" />
+  </ItemGroup>
+
 </Project>
