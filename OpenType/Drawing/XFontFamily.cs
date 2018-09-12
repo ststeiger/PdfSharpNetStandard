@@ -50,18 +50,8 @@ namespace PdfSharp.Drawing
     /// </summary>
     public sealed class XFontFamily
     {
-        /// <summary>
-        /// Gets the name of the font family.
-        /// </summary>
-        public string Name
-        {
-            get {
-                return ""; // FamilyInternal.Name; 
-            }
-        }
-
-
-        /*
+        
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="XFontFamily"/> class.
         /// </summary>
@@ -328,6 +318,6 @@ namespace PdfSharp.Drawing
         /// The implementation sigleton of font family;
         /// </summary>
         internal FontFamilyInternal FamilyInternal;
-        */
+        
     }
 }

@@ -52,7 +52,7 @@ using UwpFontFamily = Windows.UI.Xaml.Media.FontFamily;
 using PdfSharp.Fonts;
 using PdfSharp.Fonts.OpenType;
 using PdfSharp.Internal;
-//using PdfSharp.Pdf;
+using PdfSharp.Pdf;
 
 #if SILVERLIGHT
 #pragma warning disable 649
@@ -67,23 +67,8 @@ namespace PdfSharp.Drawing
     [DebuggerDisplay("{DebuggerDisplay}")]
     public sealed class XFont
     {
-
-
-        internal XGlyphTypeface GlyphTypeface
-        {
-            get { return _glyphTypeface; }
-        }
-        XGlyphTypeface _glyphTypeface;
-
-
-        public string Name
-        {
-            get { return _glyphTypeface.FontFamily.Name; }
-        }
-
-
-
-        /*
+        
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="XFont"/> class.
         /// </summary>
@@ -433,6 +418,7 @@ namespace PdfSharp.Drawing
             finally { Lock.ExitFontFactory(); }
         }
 #endif
+
 
 #if WPF && !SILVERLIGHT
         void InitializeFromWpf()
@@ -875,7 +861,7 @@ namespace PdfSharp.Drawing
         {
             get { return String.Format(CultureInfo.InvariantCulture, "font=('{0}' {1:0.##})", Name, Size); }
         }
-        */
+        
     }
 
 }

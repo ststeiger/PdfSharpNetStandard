@@ -59,6 +59,7 @@ namespace PdfSharp.Fonts
     internal static class FontFactory
     {
 
+        /*
         public static bool TryGetFontSourceByKey(ulong key, out XFontSource fontSource)
         {
             fontSource = null;
@@ -86,8 +87,21 @@ namespace PdfSharp.Fonts
         }
 
 
-        /*
+        public static FontResolverInfo ResolveTypeface(string familyName, FontResolvingOptions fontResolvingOptions,
+            string typefaceKey)
+        {
+            return null;
+        }
+        
+        
+        public static XFontSource GetFontSourceByFontName(string fontName)
+        {
+            return null;
+        }
+        */
 
+
+        
         //// Suffix for internal face names to indicate that the font data comes from the platform
         //// and not from the users font resolver.
         //public const string PlatformTag = "platform:";
@@ -476,6 +490,6 @@ namespace PdfSharp.Fonts
         /// Maps font source key to font source.
         /// </summary>
         static readonly Dictionary<ulong, XFontSource> FontSourcesByKey = new Dictionary<ulong, XFontSource>();
-        */
+        
     }
 }

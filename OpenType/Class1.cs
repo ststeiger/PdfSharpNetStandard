@@ -15,10 +15,7 @@ namespace PdfSharp.Drawing
     public class XGraphics
     {
     }
-
-    public class XPdfFontOptions
-    { }
-
+    
 }
 
 
@@ -26,8 +23,19 @@ namespace PdfSharp.Pdf.Internal
 {
     internal class PdfEncoders
     {
+        static System.Text.Encoding _unicodeEncoding;
         static System.Text.Encoding _winAnsiEncoding;
-
+        
+        
+        /// <summary>
+        /// Gets the UNICODE little-endian encoding.
+        /// </summary>
+        public static System.Text.Encoding UnicodeEncoding
+        {
+            get { return _unicodeEncoding ?? (_unicodeEncoding = System.Text.Encoding.Unicode); }
+        }
+        
+        
         /// <summary>
         /// Gets the Windows 1252 (ANSI) encoding.
         /// </summary>

@@ -59,6 +59,8 @@ using PdfSharp.Fonts.OpenType;
 
 namespace PdfSharp.Drawing
 {
+    
+    
     /// <summary>
     /// A bunch of functions that do not have a better place.
     /// </summary>
@@ -101,7 +103,39 @@ namespace PdfSharp.Drawing
             return (ul1 << 32) | ul2;
         }
 
+        
+        
+#if CORE || GDI
+        public static GdiFont CreateFont(string familyName, double emSize, GdiFontStyle style, out XFontSource fontSource)
+        {
+            fontSource = null;
+            // ReSharper disable once JoinDeclarationAndInitializer
+            GdiFont font;
 
+            // Use font resolver in CORE build. XPrivateFontCollection exists only in GDI and WPF build.
+#if GDI
+            // Try private font collection first.
+            font = XPrivateFontCollection.TryCreateFont(familyName, emSize, style, out fontSource);
+            if (font != null)
+            {
+                // Get font source is different for this font because Win32 does not know it.
+                return font;
+            }
+#endif
+            // Create ordinary Win32 font.
+            font = new GdiFont(familyName, (float)emSize, style, GraphicsUnit.World);
+            return font;
+        }
+#endif
+        
+
+        
+        public static XFontStyle CreateStyle(bool isBold, bool isItalic)
+        {
+            return (isBold ? XFontStyle.Bold : 0) | (isItalic ? XFontStyle.Italic : 0);
+        }
+        
+        
         /*
         /// <summary>
         /// Measure string directly from font data.
@@ -151,28 +185,6 @@ namespace PdfSharp.Drawing
             return size;
         }
 
-#if CORE || GDI
-        public static GdiFont CreateFont(string familyName, double emSize, GdiFontStyle style, out XFontSource fontSource)
-        {
-            fontSource = null;
-            // ReSharper disable once JoinDeclarationAndInitializer
-            GdiFont font;
-
-            // Use font resolver in CORE build. XPrivateFontCollection exists only in GDI and WPF build.
-#if GDI
-            // Try private font collection first.
-            font = XPrivateFontCollection.TryCreateFont(familyName, emSize, style, out fontSource);
-            if (font != null)
-            {
-                // Get font source is different for this font because Win32 does not know it.
-                return font;
-            }
-#endif
-            // Create ordinary Win32 font.
-            font = new GdiFont(familyName, (float)emSize, style, GraphicsUnit.World);
-            return font;
-        }
-#endif
 
 #if WPF
 #if !SILVERLIGHT
@@ -341,10 +353,6 @@ namespace PdfSharp.Drawing
 #endif
 
 
-        public static XFontStyle CreateStyle(bool isBold, bool isItalic)
-        {
-            return (isBold ? XFontStyle.Bold : 0) | (isItalic ? XFontStyle.Italic : 0);
-        }
         */
     }
 }

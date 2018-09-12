@@ -69,67 +69,8 @@ namespace PdfSharp.Drawing
     [DebuggerDisplay("{DebuggerDisplay}")]
     internal sealed class XGlyphTypeface
     {
-
-        public XFontFamily FontFamily
-        {
-            get { return _fontFamily; }
-        }
-        readonly XFontFamily _fontFamily;
-
-        public string Key
-        {
-            get { return _key; }
-        }
-        readonly string _key;
-
-        internal OpenTypeFontface Fontface
-        {
-            get { return _fontface; }
-        }
-        readonly OpenTypeFontface _fontface;
-
-        
-        public XFontSource FontSource
-        {
-            get { return _fontSource; }
-        }
-        readonly XFontSource _fontSource;
         
         
-        public XStyleSimulations StyleSimulations
-        {
-            get { return _styleSimulations; }
-        }
-        XStyleSimulations _styleSimulations;
-        
-        
-        internal GdiFont GdiFont
-        {
-            get { return _gdiFont; }
-        }
-
-        private readonly GdiFont _gdiFont;
-        
-        
-        
-        XGlyphTypeface(string key, XFontFamily fontFamily, XFontSource fontSource, XStyleSimulations styleSimulations, GdiFont gdiFont)
-        {
-            _key = key;
-            _fontFamily = fontFamily;
-            _fontSource = fontSource;
-            
-            _fontface = OpenTypeFontface.CetOrCreateFrom(fontSource);
-            // Debug.Assert(ReferenceEquals(_fontSource.Fontface, _fontface));
-            
-            //_gdiFont = gdiFont;
-            _styleSimulations = styleSimulations;
-            //Initialize();
-        }
-        
-        
-        
-
-        /*
         // Implementation Notes
         // XGlyphTypeface is the centerpiece for font management. There is a one to one relationship
         // between XFont an XGlyphTypeface.
@@ -659,6 +600,6 @@ namespace PdfSharp.Drawing
         {
             get { return string.Format(CultureInfo.InvariantCulture, "{0} - {1} ({2})", FamilyName, StyleName, FaceName); }
         }
-        */
+        
     }
 }
