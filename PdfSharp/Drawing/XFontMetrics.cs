@@ -40,16 +40,16 @@ namespace PdfSharp.Drawing
         {
             _name = name;
             _unitsPerEm = unitsPerEm;
-            _ascent = ascent;
-            _descent = descent;
+            _ascent = ascent; // tmAscent ? 
+            _descent = descent; // tmDescent ? 
             _leading = leading;
             _lineSpacing = lineSpacing;
             _capHeight = capHeight;
             _xHeight = xHeight;
             _stemV = stemV;
             _stemH = stemH;
-            _averageWidth = averageWidth;
-            _maxWidth = maxWidth;
+            _averageWidth = averageWidth; // tmAveCharWidth ? 
+            _maxWidth = maxWidth; // tmMaxCharWidth ? 
             _underlinePosition = underlinePosition;
             _underlineThickness = underlineThickness;
             _strikethroughPosition = strikethroughPosition;
