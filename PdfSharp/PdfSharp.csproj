@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Stefan Steiger and Contributors</Authors>
+    <Description>PdfSharp for .NET Standard
+
+PdfSharpNetStandard is a partial port of PdfSharp.Xamarin for .NET Standard Additionally MigraDoc has been ported as well (from version 1.32). Images have been implemented with ImageSharp from https://www.nuget.org/packages/SixLabors.ImageSharp</Description>
+    <PackageLicenseUrl>https://github.com/ststeiger/PdfSharpNetStandard</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ststeiger/PdfSharpNetStandard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ststeiger/PdfSharpNetStandard</RepositoryUrl>
+    <summary>PdfSharp for .NET Standard</summary>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
