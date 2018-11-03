@@ -1,0 +1,23 @@
+---
+platform: linux
+image_resource: 
+  type: docker-image
+  source:
+    repository: microsoft/dotnet
+    tag: 2.2-sdk
+inputs:
+  - name: source
+  - name: version
+
+params:
+  NUGGET_API_KEY: ((nugget_api_key))
+
+run:
+  path: /bin/sh
+  args:
+  - -c
+  - |
+    VERSION=$(cat version/version)
+    cd source/PdfSharp
+    dotnet build /p:PackageId=PdfSharpNetStandard /p:PackageReleaseNotes="$(cat ../.git/commit_message)" /p:PackageVersion=${VERSION} /p:AssemblyVersion=${VERSION} /p:FileVersion=${VERSION} /p:PackageTags="PdfSharp .NETStandard $(cat ../.git/ref)" -c Release -o out PdfSharp.csproj
+    dotnet nuget push out/PdfSharpNetStandard.${VERSION}.nupkg -k ${NUGGET_API_KEY} -s https://api.nuget.org/v3/index.json
