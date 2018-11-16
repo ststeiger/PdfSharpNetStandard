@@ -42,10 +42,33 @@ namespace TestApplication
         static void CropPdf1(double crop_width, double crop_height)
         {
             string fn = @"D:\username\Desktop\0001 Altstetten - GB01 H602 - OG14.pdf";
-
+            fn = @"D:\Stefan.Steiger\Desktop\0030 Sentimatt - GB01 Sentimatt - EG00.pdf";
             // The current implementation of PDFsharp has only one layout of the graphics context.
             // The origin(0, 0) is top left and coordinates grow right and down. 
             // The unit of measure is always point (1 / 72 inch).
+
+            // 1 pt = 0,0352778 cm
+            // 1 pt = 0,352778 mm 
+            // 1 inch = 2,54 cm 
+            // 1/72 inch to cm = 0,035277777777777776 cm
+
+
+            // A0:
+            // w: 2384 pt =  84,10222 cm
+            // h: 3370 pt = 118,8861  cm
+
+            // A3:
+            // w:  842 pt = 29,7039  cm
+            // h: 1191 pt = 42,01583 cm
+
+            // A4:
+            // 595 pt to cm = 20,9903 w
+            // 842 pt to cm = 29,7039 h
+
+            crop_width = 595;
+            crop_height = 842;
+
+
 
             using (PdfSharp.Drawing.XPdfForm sourceForm = PdfSharp.Drawing.XPdfForm.FromFile(fn))
             {
@@ -69,6 +92,9 @@ namespace TestApplication
                             PdfPage destPage = destDocument.AddPage();
                             destPage.Width = sourceForm.Page.Width;
                             destPage.Height = sourceForm.Page.Height;
+
+
+
 
                             PdfSharp.Drawing.XRect cropDim = new PdfSharp.Drawing.XRect(ihori*crop_width, iverti * crop_height, crop_width, crop_height);
 
@@ -106,7 +132,7 @@ namespace TestApplication
 
 
             CropPdf1(400, 800);
-            CropPdf2();
+            // CropPdf2();
             
 
             // https://gunnarpeipman.com/net/no-data-is-available-for-encoding/
