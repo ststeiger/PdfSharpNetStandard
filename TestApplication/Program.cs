@@ -1,4 +1,7 @@
 ﻿
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+
 namespace TestApplication
 {
 
@@ -6,16 +9,114 @@ namespace TestApplication
     class Program
     {
 
+
+        static void CropPdf2()
+        {
+            string fn = @"D:\username\Desktop\0001 Altstetten - GB01 H602 - OG14.pdf";
+
+            int ten = (int)(28.3465 * 10);
+            int hundred = (int)(28.3465 * 100);
+
+            int x = ten / 20;
+            int y = hundred / 20;
+
+            PdfSharp.Drawing.XRect cropDim = new PdfSharp.Drawing.XRect(0, 0, 200, 200);
+            cropDim = new PdfSharp.Drawing.XRect(200, 200, 200, 200);
+
+            using (PdfSharp.Pdf.PdfDocument sourceDocument = PdfSharp.Pdf.IO.PdfReader.Open(fn))
+            {
+                PdfPage sourcePage = sourceDocument.Pages[0];
+
+                // Crop the PDF - DOES IT WRONG...
+                // sourcePage.CropBox = new PdfRectangle(cropDim);
+
+                PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(cropDim.X, sourcePage.Height - cropDim.Height - cropDim.Y, cropDim.Width, cropDim.Height);
+                sourcePage.CropBox = new PdfRectangle(cropRect);
+
+                sourceDocument.Save("cropped2.pdf");
+            } // End Using sourceDocument 
+
+        } // End Sub CropPdf2 
+
+
+        static void CropPdf1(double crop_width, double crop_height)
+        {
+            string fn = @"D:\username\Desktop\0001 Altstetten - GB01 H602 - OG14.pdf";
+
+            // The current implementation of PDFsharp has only one layout of the graphics context.
+            // The origin(0, 0) is top left and coordinates grow right and down. 
+            // The unit of measure is always point (1 / 72 inch).
+
+            using (PdfSharp.Drawing.XPdfForm sourceForm = PdfSharp.Drawing.XPdfForm.FromFile(fn))
+            {
+                sourceForm.PageNumber = 1;
+
+                int numHori = (int) System.Math.Ceiling(sourceForm.Page.Width/ crop_width);
+                int numVerti = (int)System.Math.Ceiling(sourceForm.Page.Height/ crop_height);
+                PdfSharp.Drawing.XRect pageDimenstions = new PdfSharp.Drawing.XRect(0, 0, sourceForm.Page.Width.Point, sourceForm.Page.Height.Point);
+
+
+                // Crop the PDF - HAS NO EFFECT...
+                // sourceForm.Page.CropBox = new PdfRectangle(cropDim);
+
+                using (PdfDocument destDocument = new PdfDocument())
+                {
+                    for (int iverti = 0; iverti < numHori; iverti++)
+                    {
+
+                        for (int ihori = 0; ihori < numHori; ihori++)
+                        {
+                            PdfPage destPage = destDocument.AddPage();
+                            destPage.Width = sourceForm.Page.Width;
+                            destPage.Height = sourceForm.Page.Height;
+
+                            PdfSharp.Drawing.XRect cropDim = new PdfSharp.Drawing.XRect(ihori*crop_width, iverti * crop_height, crop_width, crop_height);
+
+                            PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(cropDim.X, destPage.Height - cropDim.Height - cropDim.Y, cropDim.Width, cropDim.Height);
+
+                            using (XGraphics destGFX = XGraphics.FromPdfPage(destPage))
+                            {
+                                destGFX.DrawImage(sourceForm, pageDimenstions);
+                                destGFX.DrawRectangle(PdfSharp.Drawing.XPens.DeepPink, cropDim);
+                            } // End Using destGFX 
+
+                            destPage.CropBox = new PdfRectangle(cropRect);
+
+                            /* 
+                            destPage.CropBox = new PdfRectangle(new XPoint(cropDim.X, destPage.Height - cropDim.Height - cropDim.Y),
+                                                 new XSize(cropDim.Width, cropDim.Height));
+                            */
+                        } // Next pnum 
+
+                    }
+
+                    destDocument.Save("cropped1.pdf");
+                } // End Using gfx 
+
+            } // End Using document 
+
+        } // End Sub CropPdf1 
+
+
         // nuget: System.Text.Encoding.CodePages
         static void Main(string[] args)
         {
+            // System.NotSupportedException: No data is available for encoding 1252
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+
+            CropPdf1(400, 800);
+            CropPdf2();
+            
+
             // https://gunnarpeipman.com/net/no-data-is-available-for-encoding/
             // https://stackoverflow.com/questions/49215791/vs-code-c-sharp-system-notsupportedexception-no-data-is-available-for-encodin?noredirect=1&lq=1
             // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
             // TestPdfReader();
             // ReadPdf();
-            WriteTest();
+            // WriteTest();
+            // TestCrop();
             System.Console.WriteLine(" --- Press any key to continue --- ");
             System.Console.ReadKey();
         } // End Sub Main 
@@ -81,6 +182,7 @@ namespace TestApplication
                 box = new PdfSharp.Drawing.XRect(0, 0, width / 2, height);
                 // Draw the page identified by the page number like an image
                 gfx.DrawImage(form, box);
+                
 
                 // Write document file name and page number on each page
                 box.Inflate(0, -10);
@@ -178,7 +280,7 @@ namespace TestApplication
 
                     gfx.DrawRectangle(pen, new PdfSharp.Drawing.XRect(100, 100, 100, 100));
 
-                    using (var img = PdfSharp.Drawing.XImage.FromFile(@"D:\Stefan.Steiger\Documents\Visual Studio 2017\Projects\PdfSharp\TestApplication\Wikipedesketch1.png"))
+                    using (PdfSharp.Drawing.XImage img = PdfSharp.Drawing.XImage.FromFile(@"D:\Stefan.Steiger\Documents\Visual Studio 2017\Projects\PdfSharp\TestApplication\Wikipedesketch1.png"))
                     {
                         gfx.DrawImage(img, 500, 500);
                     }
