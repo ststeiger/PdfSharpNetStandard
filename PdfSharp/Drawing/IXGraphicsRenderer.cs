@@ -133,6 +133,10 @@ namespace PdfSharp.Drawing
         void DrawImage(XImage image, double x, double y, double width, double height);
         void DrawImage(XImage image, XRect destRect, XRect srcRect, XGraphicsUnit srcUnit);
 
+        void DrawImageCropped(XImage image, XRect destRect, XRect srcRect, XGraphicsUnit srcUnit);
+
+
+
         #endregion
 
         #region Save and Restore

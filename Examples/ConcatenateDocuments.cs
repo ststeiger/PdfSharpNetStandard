@@ -49,6 +49,8 @@ namespace Examples
                 {
                     // Get the page from the external document...
                     PdfPage page = inputDocument.Pages[idx];
+
+
                     // ...and add it to the output document.
                     outputDocument.AddPage(page);
                 }

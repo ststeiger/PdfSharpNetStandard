@@ -3916,11 +3916,22 @@ namespace PdfSharp.Drawing  // #??? Clean up
             //image.Height * 72 / image.HorizontalResolution);
         }
 
-#if GDI
+
         /// <summary>
         /// Draws the specified image.
         /// </summary>
-        public void DrawImage(XImage image, Rectangle rect)
+        public void DrawImageCropped(XImage image, XRect destRect, XRect srcRect, XGraphicsUnit srcUnit)
+        {
+            if (_renderer != null)
+                _renderer.DrawImageCropped(image, destRect, srcRect, srcUnit);
+        }
+
+
+#if GDI
+            /// <summary>
+            /// Draws the specified image.
+            /// </summary>
+            public void DrawImage(XImage image, Rectangle rect)
         {
             // Because of overloading the cast is NOT redundant.
             DrawImage(image, (double)rect.X, (double)rect.Y, (double)rect.Width, (double)rect.Height);

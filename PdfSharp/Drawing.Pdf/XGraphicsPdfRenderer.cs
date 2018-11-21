@@ -760,6 +760,55 @@ namespace PdfSharp.Drawing.Pdf
             }
         }
 
+
+
+        // TODO: incomplete - srcRect not used
+        public void DrawImageCropped(XImage image, XRect destRect, XRect srcRect, XGraphicsUnit srcUnit)
+        {
+            const string format = Config.SignificantFigures4;
+
+            double x = destRect.X;
+            double y = destRect.Y;
+            double width = destRect.Width;
+            double height = destRect.Height;
+
+            string name = Realize(image);
+
+            BeginPage();
+
+            XForm form = (XForm)image;
+            form.Finish();
+
+            PdfFormXObject pdfForm = Owner.FormTable.GetForm(form);
+
+
+            double cx = 1.0d;
+            double cy = 1.0d;
+
+            XPdfForm xForm = image as XPdfForm;
+            if (_gfx.PageDirection == XPageDirection.Downwards)
+            {
+                double xDraw = x;
+                double yDraw = y;
+                if (xForm != null)
+                {
+                    // Yes, it is an XPdfForm - adjust the position where the page will be drawn.
+                    xDraw -= xForm.Page.MediaBox.X1;
+                    yDraw += xForm.Page.MediaBox.Y1;
+                }
+                AppendFormatImage("q {2:" + format + "} 0 0 {3:" + format + "} {0:" + format + "} {1:" + format + "} cm {4} Do Q\n",
+                    0-x, srcRect.Height-y, cx, cy, name);
+            }
+            else
+            {
+                // TODO Translation for MediaBox.
+                AppendFormatImage("q {2:" + format + "} 0 0 {3:" + format + "} {0:" + format + "} {1:" + format + "} cm {4} Do Q\n",
+                    x, y, cx, cy, name);
+            }
+
+        }
+
+
         #endregion
 
         // --------------------------------------------------------------------------------------------
