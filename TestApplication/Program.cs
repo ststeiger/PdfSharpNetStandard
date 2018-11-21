@@ -71,7 +71,7 @@ namespace TestApplication
             page_height = 842;
 
 
-            double pageMargin = 28.3465d; // 1cm in pt 
+            double pageMargin = mm2pt(10); // 1cm in pt 
 
             double crop_width = page_width - 2 * pageMargin;
             double crop_height = page_height - 2 * pageMargin;
@@ -150,7 +150,11 @@ namespace TestApplication
                                             // targetGFX.DrawImageCropped(croppedImages, targetRect, targetRect, XGraphicsUnit.Point);
 
                                             // targetGFX.DrawImage(croppedImages, targetRect);
+
                                             targetGFX.DrawImage(croppedImages, targetRect, targetRect, XGraphicsUnit.Point);
+
+                                            DrawBorder(targetGFX, targetPage.Width.Point, targetPage.Height.Point);
+                                            DrawCrosshairs(targetGFX, targetPage.Width.Point, targetPage.Height.Point);
                                         } // End using targetGFX
 
                                     }
@@ -160,7 +164,7 @@ namespace TestApplication
                                         System.Console.WriteLine(ex.Message);
                                     }
 
-                                    // break;
+                                    break;
                                 } // Next i 
 
                                 finalDestination.Save("final.pdf");
@@ -175,6 +179,136 @@ namespace TestApplication
             } // End Using sourceForm 
 
         } // End Sub CropPdf3 
+
+        public static double mm2pt(double mm)
+        {
+            return mm * 2.83465d;
+        }
+
+
+        public static void DrawBorder(XGraphics gfx, double width, double height)
+        {
+
+            double pageMargin = mm2pt(10);
+            double halfPenWidth = XPens.Black.Width / 2.0;
+
+            double x1 = 0;
+            double y1 = pageMargin - halfPenWidth;
+            double x2 = width;
+            double y2 = pageMargin - halfPenWidth;
+            gfx.DrawLine(XPens.Yellow, x1, y1, x2, y2); // Horizontal Top
+
+
+
+            // y1 = height-pageMargin;
+            x1 = 0;
+            y1 = height - pageMargin + halfPenWidth;
+            x2 = width; // 1/4 + 1/8 ()*0.5= 3/16
+            y2 = height - pageMargin + halfPenWidth;
+            gfx.DrawLine(XPens.HotPink, x1, y1, x2, y2); // Horizontal Bottom 
+
+
+
+            x1 = pageMargin - halfPenWidth;
+            y1 = 0;
+            x2 = pageMargin - halfPenWidth;
+            y2 = height;
+            gfx.DrawLine(XPens.Blue, x1, y1, x2, y2); // Vertical Left
+
+
+            x1 = width- pageMargin + halfPenWidth;
+            y1 = 0;
+            x2 = width - pageMargin + halfPenWidth;
+            y2 = height;
+            gfx.DrawLine(XPens.Green, x1, y1, x2, y2); // Vertical Right
+        }
+
+
+
+        public static void DrawCrosshairs(XGraphics gfx, double width, double height)
+        {
+            DrawCrossTopLeft(gfx, width, height);
+            DrawCrossTopRight(gfx, width, height);
+            DrawCrossBottomLeft(gfx, width, height);
+            DrawCrossBottomRight(gfx, width, height);
+        }
+
+
+        public static void DrawCrossTopLeft(XGraphics gfx, double width, double height)
+        {
+            double pageMargin = mm2pt(10);
+            double halfPenWidth = XPens.Black.Width / 2.0;
+
+            double x1 = 0;
+            double y1 = pageMargin - halfPenWidth;
+            double x2 = pageMargin;
+            double y2 = pageMargin- halfPenWidth;
+            gfx.DrawLine(XPens.Black, x1, y1, x2, y2); // Horizontal
+
+            x1 = pageMargin  -  halfPenWidth;
+            y1 = 0;
+            x2 = pageMargin - halfPenWidth; // 1/4 + 1/8 ()*0.5= 3/16
+            y2 = pageMargin;
+            gfx.DrawLine(XPens.Red, x1, y1, x2, y2); // Vertical 
+        }
+
+        public static void DrawCrossTopRight(XGraphics gfx, double width, double height)
+        {
+            double pageMargin = mm2pt(10);
+            double halfPenWidth = XPens.Black.Width / 2.0;
+
+            double x1 = width - pageMargin;
+            double y1 = pageMargin - halfPenWidth;
+            double x2 = width;
+            double y2 = pageMargin - halfPenWidth;
+            gfx.DrawLine(XPens.Black, x1, y1, x2, y2); // Horizontal
+
+            x1 = width - pageMargin + halfPenWidth;
+            y1 = 0;
+            x2 = width - pageMargin + halfPenWidth;
+            y2 = pageMargin;
+            gfx.DrawLine(XPens.Red, x1, y1, x2, y2); // Vertical 
+        }
+
+        public static void DrawCrossBottomLeft(XGraphics gfx, double width, double height)
+        {
+            double pageMargin = mm2pt(10);
+            double halfPenWidth = XPens.Black.Width / 2.0;
+
+
+
+            double x1 = 0;
+            double y1 = height- pageMargin + halfPenWidth;
+            double x2 = pageMargin;
+            double y2 = height - pageMargin + halfPenWidth;
+            gfx.DrawLine(XPens.Black, x1, y1, x2, y2); // Horizontal
+
+            x1 = pageMargin - halfPenWidth;
+            y1 = height-pageMargin;
+            x2 = pageMargin - halfPenWidth; // 1/4 + 1/8 ()*0.5= 3/16
+            y2 = height;
+            gfx.DrawLine(XPens.Red, x1, y1, x2, y2); // Vertical 
+
+        }
+
+        public static void DrawCrossBottomRight(XGraphics gfx, double width, double height)
+        {
+            double pageMargin = mm2pt(10);
+            double halfPenWidth = XPens.Black.Width / 2.0;
+
+            double x1 = width - pageMargin;
+            double y1 = height - pageMargin + halfPenWidth;
+            double x2 = width;
+            double y2 = height - pageMargin + halfPenWidth;
+            gfx.DrawLine(XPens.Black, x1, y1, x2, y2); // Horizontal
+            
+            x1 = width - pageMargin + halfPenWidth;
+            y1 = height-pageMargin;
+            x2 = width - pageMargin + halfPenWidth;
+            y2 = height;
+            gfx.DrawLine(XPens.Red, x1, y1, x2, y2); // Vertical 
+        }
+
 
 
         static void CropPdf1(double page_width, double page_height)
