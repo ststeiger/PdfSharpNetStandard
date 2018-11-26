@@ -1,9 +1,44 @@
 ﻿
-using PdfSharp.Drawing;
-//using PdfSharp.Pdf;
-
 namespace TestApplication
 {
+
+
+
+    public class PdfMargin
+    {
+
+        public double Left;
+        public double Right;
+        public double Top;
+        public double Bottom;
+
+        public double All
+        {
+            set
+            {
+                this.Left = value;
+                this.Right = value;
+                this.Top = value;
+                this.Bottom = value;
+            }
+        }
+
+        public PdfMargin()
+        { }
+
+        public PdfMargin(double margin)
+        {
+            this.All = margin;
+        }
+
+        public PdfMargin(double left, double right, double top, double bottom)
+        {
+            this.Left = left;
+            this.Right = right;
+            this.Top = top;
+            this.Bottom = bottom;
+        }
+    }
 
 
     class Program
@@ -30,57 +65,20 @@ namespace TestApplication
                 // Crop the PDF - DOES IT WRONG...
                 // sourcePage.CropBox = new PdfSharp.Pdf.PdfRectangle(cropDim);
 
-                PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(cropDim.X, sourcePage.Height - cropDim.Height - cropDim.Y, cropDim.Width, cropDim.Height);
+                PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(cropDim.X, sourcePage.Height.Point - cropDim.Height - cropDim.Y, cropDim.Width, cropDim.Height);
                 sourcePage.CropBox = new PdfSharp.Pdf.PdfRectangle(cropRect);
 
-                sourceDocument.Save("cropped2.pdf");
+                sourceDocument.Save("CropPdf2.pdf");
             } // End Using sourceDocument 
 
         } // End Sub CropPdf2 
-
-
-        public class Margin
-        {
-
-            public double Left;
-            public double Right;
-            public double Top;
-            public double Bottom;
-
-            public double All
-            {
-                set
-                {
-                    this.Left = value;
-                    this.Right = value;
-                    this.Top = value;
-                    this.Bottom = value;
-                }
-            }
-
-            public Margin()
-            { }
-
-            public Margin(double margin)
-            {
-                this.All = margin;
-            }
-
-            public Margin(double left, double right, double top, double bottom)
-            {
-                this.Left = left;
-                this.Right = right;
-                this.Top = top;
-                this.Bottom = bottom;
-            }
-        }
 
 
 
         static void CropPdf3(double page_width, double page_height)
         {
             string fn = @"D:\username\Desktop\0001 Altstetten - GB01 H602 - OG14.pdf";
-            // fn = @"D:\Stefan.Steiger\Desktop\0030 Sentimatt - GB01 Sentimatt - EG00.pdf";
+            // fn = @"D:\username\Desktop\0030 Sentimatt - GB01 Sentimatt - EG00.pdf";
             fn = @"D:\username\Desktop\Altstetten_1_50.pdf";
 
 
@@ -120,19 +118,18 @@ namespace TestApplication
             page_width = 595;
             page_height = 842;
 
-            Margin margin = new Margin(mm2pt(10)); // 1cm in pt 
+            PdfMargin margin = new PdfMargin(mm2pt(10)); // 1cm in pt 
             
 
             double crop_width = page_width - margin.Left - margin.Right;
             double crop_height = page_height - margin.Top - margin.Bottom;
-
-
+            
 
             using (PdfSharp.Drawing.XPdfForm sourceForm = PdfSharp.Drawing.XPdfForm.FromFile(fn))
             {
                 sourceForm.PageNumber = 1;
-                int numHori = (int)System.Math.Ceiling(sourceForm.Page.Width / crop_width);
-                int numVerti = (int)System.Math.Ceiling(sourceForm.Page.Height / crop_height);
+                int numHori = (int)System.Math.Ceiling(sourceForm.Page.Width.Point / crop_width);
+                int numVerti = (int)System.Math.Ceiling(sourceForm.Page.Height.Point / crop_height);
 
                 PdfSharp.Drawing.XRect pageDimenstions = new PdfSharp.Drawing.XRect(0, 0, sourceForm.Page.Width, sourceForm.Page.Height);
 
@@ -149,18 +146,16 @@ namespace TestApplication
 
                             PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(ihori * crop_width, iverti * crop_height, sourceForm.Page.Width, sourceForm.Page.Height);
                             
-                            using (XGraphics destGFX = XGraphics.FromPdfPage(destPage))
+                            using (PdfSharp.Drawing.XGraphics destGFX = PdfSharp.Drawing.XGraphics.FromPdfPage(destPage))
                             {
-                                destGFX.DrawImageCropped(sourceForm, cropRect, pageDimenstions, XGraphicsUnit.Point);
+                                destGFX.DrawImageCropped(sourceForm, cropRect, pageDimenstions, PdfSharp.Drawing.XGraphicsUnit.Point);
                             } // End Using destGFX 
 
                         } // ihori
 
                     } // iverti
 
-                    destDocument.Save("chopped.pdf");
-
-
+                    // destDocument.Save("chopped.pdf");
 
                     using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
                     {
@@ -172,7 +167,7 @@ namespace TestApplication
 
                             using (PdfSharp.Pdf.PdfDocument finalDestination = new PdfSharp.Pdf.PdfDocument())
                             {
-                                XFont font = new XFont("Arial", 8);
+                                PdfSharp.Drawing.XFont font = new PdfSharp.Drawing.XFont("Arial", 8);
 
                                 for (int i = 0; i < croppedImages.PageCount; ++i)
                                 {
@@ -186,7 +181,7 @@ namespace TestApplication
                                     {
                                         croppedImages.PageIndex = i;
 
-                                        using (XGraphics targetGFX = XGraphics.FromPdfPage(targetPage))
+                                        using (PdfSharp.Drawing.XGraphics targetGFX = PdfSharp.Drawing.XGraphics.FromPdfPage(targetPage))
                                         {
 #if DEBUG_ME
                                             targetGFX.DrawRectangle(XBrushes.Honeydew, pageSize);
@@ -194,7 +189,7 @@ namespace TestApplication
 
                                             PdfSharp.Drawing.XRect targetRect = new PdfSharp.Drawing.XRect(margin.Left, margin.Top, crop_width, crop_height);
                                             
-                                            targetGFX.DrawImage(croppedImages, targetRect, targetRect, XGraphicsUnit.Point);
+                                            targetGFX.DrawImage(croppedImages, targetRect, targetRect, PdfSharp.Drawing.XGraphicsUnit.Point);
 
                                             DrawBorder(targetGFX, targetPage.Width.Point, targetPage.Height.Point, margin);
                                             DrawCrosshairs(targetGFX, targetPage.Width.Point, targetPage.Height.Point, margin);
@@ -205,8 +200,8 @@ namespace TestApplication
                                             int col = i % numHori;
                                             int row = i / numHori;
 
-                                            // targetGFX.DrawString($"Column {col + 1}/{numHori} Row {row + 1}/{numVerti}, Page {i + 1}/{croppedImages.PageCount}", font, XBrushes.Black, margin.Left + 5, targetPage.Height.Point - margin.Bottom + font.Size + 5);
-                                            targetGFX.DrawString($"Spalte {col + 1}/{numHori} Zeile {row + 1}/{numVerti}, Seite {i + 1}/{croppedImages.PageCount}", font, XBrushes.Black, margin.Left + 5, targetPage.Height.Point - margin.Bottom + font.Size + 5);
+                                            // targetGFX.DrawString($"Column {col + 1}/{numHori} Row {row + 1}/{numVerti}, Page {i + 1}/{croppedImages.PageCount}", font, PdfSharp.Drawing.XBrushes.Black, margin.Left + 5, targetPage.Height.Point - margin.Bottom + font.Size + 5);
+                                            targetGFX.DrawString($"Spalte {col + 1}/{numHori} Zeile {row + 1}/{numVerti}, Seite {i + 1}/{croppedImages.PageCount}", font, PdfSharp.Drawing.XBrushes.Black, margin.Left + 5, targetPage.Height.Point - margin.Bottom + font.Size + 5);
                                         } // End using targetGFX
 
                                     }
@@ -218,7 +213,7 @@ namespace TestApplication
 
                                 } // Next i 
 
-                                finalDestination.Save("final.pdf");
+                                finalDestination.Save("CropPdf3.pdf");
                             } // End Using finalDestination 
 
                         } // End Using croppedImages 
@@ -238,10 +233,10 @@ namespace TestApplication
         }
 
 
-        public static void DrawBorder(XGraphics gfx, double width, double height, Margin margin)
+        public static void DrawBorder(PdfSharp.Drawing.XGraphics gfx, double width, double height, PdfMargin margin)
         {
-            XPen[] pens = new XPen[] { XPens.Black, XPens.Black, XPens.Black, XPens.Black };
-            // pens = new XPen[] { XPens.Yellow, XPens.HotPink, XPens.Blue, XPens.Green };
+            PdfSharp.Drawing.XPen[] pens = new PdfSharp.Drawing.XPen[] { PdfSharp.Drawing.XPens.Black, PdfSharp.Drawing.XPens.Black, PdfSharp.Drawing.XPens.Black, PdfSharp.Drawing.XPens.Black };
+            // pens = new PdfSharp.Drawing.XPen[] { PdfSharp.Drawing.XPens.Yellow, PdfSharp.Drawing.XPens.HotPink, PdfSharp.Drawing.XPens.Blue, PdfSharp.Drawing.XPens.Green };
 
             double halfPenWidth = pens[0].Width / 2.0;
 
@@ -276,14 +271,12 @@ namespace TestApplication
 
 
 
-        public static void DrawCrosshairs(XGraphics gfx, double width, double height, Margin margin)
+        public static void DrawCrosshairs(PdfSharp.Drawing.XGraphics gfx, double width, double height, PdfMargin margin)
         {
-            XPen[] pens = new XPen[] { XPens.Black, XPens.Black };
-            // pens = new XPen[] { XPens.Yellow, XPens.Red };
+            PdfSharp.Drawing.XPen[] pens = new PdfSharp.Drawing.XPen[] { PdfSharp.Drawing.XPens.Black, PdfSharp.Drawing.XPens.Black };
+            // pens = new PdfSharp.Drawing.XPen[] { PdfSharp.Drawing.XPens.Yellow, PdfSharp.Drawing.XPens.Red };
 
             double halfPenWidth = pens[0].Width / 2.0;
-
-            double pageMargin = margin.Top;
 
             DrawCrossTopLeft(gfx, width, height, margin, halfPenWidth, pens);
             DrawCrossTopRight(gfx, width, height, margin, halfPenWidth, pens);
@@ -292,7 +285,7 @@ namespace TestApplication
         }
 
 
-        public static void DrawCrossTopLeft(XGraphics gfx, double width, double height, Margin margin, double halfPenWidth, XPen[] pens)
+        public static void DrawCrossTopLeft(PdfSharp.Drawing.XGraphics gfx, double width, double height, PdfMargin margin, double halfPenWidth, PdfSharp.Drawing.XPen[] pens)
         {
             double x1 = 0;
             double y1 = margin.Top - halfPenWidth;
@@ -307,7 +300,7 @@ namespace TestApplication
             gfx.DrawLine(pens[1], x1, y1, x2, y2); // Vertical - Red
         }
 
-        public static void DrawCrossTopRight(XGraphics gfx, double width, double height, Margin margin, double halfPenWidth, XPen[] pens)
+        public static void DrawCrossTopRight(PdfSharp.Drawing.XGraphics gfx, double width, double height, PdfMargin margin, double halfPenWidth, PdfSharp.Drawing.XPen[] pens)
         {
             double x1 = width - margin.Right;
             double y1 = margin.Top - halfPenWidth;
@@ -322,7 +315,7 @@ namespace TestApplication
             gfx.DrawLine(pens[1], x1, y1, x2, y2); // Vertical - Red 
         }
 
-        public static void DrawCrossBottomLeft(XGraphics gfx, double width, double height, Margin margin, double halfPenWidth, XPen[] pens)
+        public static void DrawCrossBottomLeft(PdfSharp.Drawing.XGraphics gfx, double width, double height, PdfMargin margin, double halfPenWidth, PdfSharp.Drawing.XPen[] pens)
         {
             double x1 = 0;
             double y1 = height - margin.Bottom + halfPenWidth;
@@ -337,7 +330,7 @@ namespace TestApplication
             gfx.DrawLine(pens[1], x1, y1, x2, y2); // Vertical - Red 
         }
 
-        public static void DrawCrossBottomRight(XGraphics gfx, double width, double height, Margin margin, double halfPenWidth, XPen[] pens)
+        public static void DrawCrossBottomRight(PdfSharp.Drawing.XGraphics gfx, double width, double height, PdfMargin margin, double halfPenWidth, PdfSharp.Drawing.XPen[] pens)
         {
             double x1 = width - margin.Right;
             double y1 = height - margin.Bottom + halfPenWidth;
@@ -353,11 +346,12 @@ namespace TestApplication
         }
 
 
-
-        static void CropPdf1(double page_width, double page_height)
+        public static void CropPdf1( double crop_width, double crop_height)
         {
             string fn = @"D:\username\Desktop\0001 Altstetten - GB01 H602 - OG14.pdf";
-            fn = @"D:\Stefan.Steiger\Desktop\0030 Sentimatt - GB01 Sentimatt - EG00.pdf";
+            // fn = @"D:\username\Desktop\0030 Sentimatt - GB01 Sentimatt - EG00.pdf";
+
+
             // The current implementation of PDFsharp has only one layout of the graphics context.
             // The origin(0, 0) is top left and coordinates grow right and down. 
             // The unit of measure is always point (1 / 72 inch).
@@ -381,17 +375,12 @@ namespace TestApplication
             // 842 pt to cm = 29,7039 h
 
 
-            double pageMargin = 28.3465d; // 1cm in pt 
-
-            double crop_width = page_width - 2 * pageMargin;
-            double crop_height = page_height-2* pageMargin;
-
             using (PdfSharp.Drawing.XPdfForm sourceForm = PdfSharp.Drawing.XPdfForm.FromFile(fn))
             {
                 sourceForm.PageNumber = 1;
 
-                int numHori = (int)System.Math.Ceiling(sourceForm.Page.Width / crop_width);
-                int numVerti = (int)System.Math.Ceiling(sourceForm.Page.Height / crop_height);
+                int numHori = (int)System.Math.Ceiling(sourceForm.Page.Width.Point / crop_width);
+                int numVerti = (int)System.Math.Ceiling(sourceForm.Page.Height.Point / crop_height);
                 PdfSharp.Drawing.XRect pageDimenstions = new PdfSharp.Drawing.XRect(0, 0, sourceForm.Page.Width.Point, sourceForm.Page.Height.Point);
 
 
@@ -412,9 +401,9 @@ namespace TestApplication
 
                             PdfSharp.Drawing.XRect cropDim = new PdfSharp.Drawing.XRect(ihori * crop_width, iverti * crop_height, crop_width, crop_height);
 
-                            PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(cropDim.X, destPage.Height - cropDim.Height - cropDim.Y, cropDim.Width, cropDim.Height);
+                            PdfSharp.Drawing.XRect cropRect = new PdfSharp.Drawing.XRect(cropDim.X, destPage.Height.Point - cropDim.Height - cropDim.Y, cropDim.Width, cropDim.Height);
 
-                            using (XGraphics destGFX = XGraphics.FromPdfPage(destPage))
+                            using (PdfSharp.Drawing.XGraphics destGFX = PdfSharp.Drawing.XGraphics.FromPdfPage(destPage))
                             {
                                 destGFX.DrawImage(sourceForm, pageDimenstions);
                                 destGFX.DrawRectangle(PdfSharp.Drawing.XPens.DeepPink, cropDim);
@@ -431,53 +420,7 @@ namespace TestApplication
 
                     } // Next iverti 
 
-
-
-                    destDocument.Save("cropped1.pdf");
-
-
-                    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-                    {
-                        destDocument.Save(ms);
-                        // ms.Position = 0;
-
-                        using (PdfSharp.Drawing.XPdfForm croppedImages = PdfSharp.Drawing.XPdfForm.FromStream(ms))
-                        {
-
-                            using (PdfSharp.Pdf.PdfDocument finalDestination = new PdfSharp.Pdf.PdfDocument())
-                            {
-                                for (int i = 1; i < croppedImages.PageCount; ++i)
-                                {
-                                    PdfSharp.Pdf.PdfPage targetPage = finalDestination.AddPage();
-                                    targetPage.Width = page_width;
-                                    targetPage.Height = page_height;
-
-                                    try
-                                    {
-                                        croppedImages.PageIndex = i;
-                                        
-                                        using (XGraphics targetGFX = XGraphics.FromPdfPage(targetPage))
-                                        {
-                                            PdfSharp.Drawing.XRect targetRect = new PdfSharp.Drawing.XRect(pageMargin, pageMargin, croppedImages.Page.CropBox.Width, croppedImages.Page.CropBox.Height);
-                                            targetGFX.DrawImageCropped(croppedImages, targetRect, targetRect, XGraphicsUnit.Point);
-                                        } // End using targetGFX
-
-                                    }
-                                    catch (System.Exception ex)
-                                    {
-                                        System.Console.WriteLine("Error on page " + croppedImages.PageIndex.ToString());
-                                        System.Console.WriteLine(ex.Message);
-                                    }
-
-                                } // Next i 
-
-                                finalDestination.Save("final.pdf");
-                            } // End Using finalDestination 
-
-                        } // End Using croppedImages 
-
-                    } // End Using ms 
-                    
+                    destDocument.Save("CropPdf1.pdf");
                 } // End Using gfx 
 
             } // End Using document 
@@ -492,9 +435,9 @@ namespace TestApplication
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
 
-            // CropPdf1(400, 800); // Crop page by poster-sector, using cropbox 
+            CropPdf1(400, 800); // Crop page by poster-sector, using cropbox 
             // CropPdf2(); // Crop the source page 
-            CropPdf3(400, 800); // Crop page by poster sector by positioning, not using cropbox, add page border lines
+            // CropPdf3(400, 800); // Crop page by poster sector by positioning, not using cropbox, add page border lines
 
             // https://gunnarpeipman.com/net/no-data-is-available-for-encoding/
             // https://stackoverflow.com/questions/49215791/vs-code-c-sharp-system-notsupportedexception-no-data-is-available-for-encodin?noredirect=1&lq=1
@@ -667,7 +610,7 @@ namespace TestApplication
 
                     gfx.DrawRectangle(pen, new PdfSharp.Drawing.XRect(100, 100, 100, 100));
 
-                    using (PdfSharp.Drawing.XImage img = PdfSharp.Drawing.XImage.FromFile(@"D:\Stefan.Steiger\Documents\Visual Studio 2017\Projects\PdfSharp\TestApplication\Wikipedesketch1.png"))
+                    using (PdfSharp.Drawing.XImage img = PdfSharp.Drawing.XImage.FromFile(@"D:\username\Documents\Visual Studio 2017\Projects\PdfSharp\TestApplication\Wikipedesketch1.png"))
                     {
                         gfx.DrawImage(img, 500, 500);
                     }
