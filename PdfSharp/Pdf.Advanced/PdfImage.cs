@@ -835,10 +835,7 @@ namespace PdfSharp.Pdf.Advanced
 #endif
             int pdfVersion = Owner.Version;
             MemoryStream memory = new MemoryStream();
-#if CORE_WITH_GDI
-            _image._gdiImage.Save(memory, ImageFormat.Bmp);
-#endif
-#if GDI
+#if CORE_WITH_GDI || GDI
             _image._gdiImage.Save(memory, ImageFormat.Bmp);
 #endif
 #if WPF
@@ -1033,10 +1030,7 @@ namespace PdfSharp.Pdf.Advanced
             bool segmentedColorMask = false;
 
             MemoryStream memory = new MemoryStream();
-#if CORE_WITH_GDI
-            _image._gdiImage.Save(memory, ImageFormat.Bmp);
-#endif
-#if GDI
+#if CORE_WITH_GDI || GDI
             _image._gdiImage.Save(memory, ImageFormat.Bmp);
 #endif
 #if WPF
