@@ -1100,6 +1100,16 @@ namespace PdfSharp.Pdf.Advanced
                 int bytesFileOffset = ReadDWord(imageBits, 10);
                 const int bytesColorPaletteOffset = 0x36; // GDI+ always returns Windows bitmaps: sizeof BITMAPFILEHEADER + sizeof BITMAPINFOHEADER
                 int paletteColors = ReadDWord(imageBits, 46);
+
+                // Fix concerning gray images using System.Drawing.Common (4.5.0) under Linux:
+                // if the number of palette colors is reported to be 0,
+                // but space is reserved for 256 palette colors,
+                // then set the number of paletteColors to 256 in order to avoid the NotImplementedException below
+                if ((bytesFileOffset - bytesColorPaletteOffset) / 4 == 256 && 0 == paletteColors)
+                {
+                    paletteColors = 256;
+                }
+
                 if ((bytesFileOffset - bytesColorPaletteOffset) / 4 != paletteColors)
                 {
                     throw new NotImplementedException("ReadIndexedMemoryBitmap: unsupported format #3");
