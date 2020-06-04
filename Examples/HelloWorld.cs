@@ -1,7 +1,7 @@
 ﻿
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-
+using System.Text;
 
 namespace Examples
 {
@@ -23,6 +23,8 @@ namespace Examples
             // Get an XGraphics object for drawing
             XGraphics gfx = XGraphics.FromPdfPage(page);
 
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+			
             // Create a font
             XFont font = new XFont("Verdana", 20, XFontStyle.BoldItalic);
 
